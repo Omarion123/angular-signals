@@ -1,4 +1,4 @@
-import { afterNextRender, computed } from '@angular/core';
+import { afterNextRender, computed, EffectRef } from '@angular/core';
 import { Component, effect, inject, Injector, signal } from '@angular/core';
 import { CoursesService } from '../services/courses.service';
 import { Course, sortCoursesBySeqNo } from '../models/course.model';
@@ -25,21 +25,21 @@ type Counter = {
 })
 export class HomeComponent {
   counter = signal(0);
+  effectRef: EffectRef | null = null;
 
-  constructor(private readonly injector: Injector) {
-    afterNextRender(() => {
-      // effect inside a function or any life-cycle hook will cause an error
-      effect(
-        () => {
-          // effect in constructor directly, without any method or life-cycle hook will not cause an issue
-          //   effect are used very rarely
-          console.log(`couner value: ${this.counter()}`);
-        },
-        {
-          // because we using effect inside afterNextRender, we will tell angular about this effect
-          injector: injector,
-        }
-      );
+  constructor() {
+    this.effectRef = effect((onCleanup) => {
+      const counter = this.counter(); // we compute logic outside any block code or conditional blocks
+      const timeout = setTimeout(() => {
+        console.log(`couner value: ${counter}`);
+      }, 1000);
+
+      onCleanup(() => {
+        // with this we are clearing the timeout
+        // before the excution of the next effect to run
+        console.log('calling clean up');
+        clearTimeout(timeout);
+      });
     });
   }
 
@@ -55,5 +55,9 @@ export class HomeComponent {
 
   increment() {
     this.counter.set(this.counter() + 1);
+  }
+
+  clean() {
+    this.effectRef?.destroy();
   }
 }
