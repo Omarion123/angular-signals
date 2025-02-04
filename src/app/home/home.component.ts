@@ -30,20 +30,8 @@ type Counter = {
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  counter = signal<Counter>({
-    value: 100,
-  });
-  increment() {
-    this.counter.update((counter) => ({
-      ...counter,
-      value: counter.value + 1,
-    }));
-  }
-
-  decrement() {
-    this.counter.update((counter) => ({
-      ...counter,
-      value: counter.value - 1,
-    }));
+  counter = signal<number[]>([0]);
+  append() {
+    this.counter.update((values) => [...values, values[values.length - 1] + 1]);
   }
 }

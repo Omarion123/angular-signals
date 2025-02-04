@@ -1,16 +1,13 @@
 <div class="courses-panel">
 
-  <h3>All Courses: {{ counter().value }}</h3>
+  <h3>All Courses: {{ counter().join(', ') }}</h3>
 
   <button class="btn">
     Add Course
   </button>
 
-  <button class="btn" (click)="increment()">
-    add one
-  </button>
-  <button class="btn" (click)="decrement()">
-    remove one
+  <button class="btn" (click)="append()">
+    append
   </button>
 
   <mat-tab-group>
