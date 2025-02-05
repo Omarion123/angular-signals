@@ -30,22 +30,37 @@ import { CoursesServiceWithFetch } from '../services/courses-fetch.service';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  courses = signal<Course[]>([]);
+  #courses = signal<Course[]>([]);
 
   constructor(
     private readonly coursesServiceWithFetch: CoursesServiceWithFetch,
     private readonly coursesService: CoursesService
   ) {
+    effect(() => {
+      console.log('beginners courses: ', this.beginnersCourses());
+      console.log('advanced courses: ', this.advancedCourses());
+    });
+
     afterNextRender(() => {
-      this.loadCourses().then(() => console.log(this.courses()));
+      this.loadCourses().then(() => console.log(this.#courses()));
     });
   }
+
+  beginnersCourses = computed(() => {
+    const courses = this.#courses();
+    return courses.filter((course) => course.category === 'BEGINNER');
+  });
+
+  advancedCourses = computed(() => {
+    const courses = this.#courses();
+    return courses.filter((course) => course.category === 'ADVANCED');
+  });
 
   async loadCourses() {
     try {
       const apiCourses = await this.coursesService.loadAllCourses();
       if (apiCourses && apiCourses?.length > 0) {
-        this.courses.set(apiCourses);
+        this.#courses.set(apiCourses);
       }
     } catch (error) {
       alert('Error loading courses');
