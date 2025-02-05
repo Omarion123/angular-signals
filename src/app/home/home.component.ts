@@ -62,7 +62,6 @@ export class HomeComponent {
 
   async loadCourses() {
     try {
-      this.loadingService.loadingOn();
       const apiCourses = await this.coursesService.loadAllCourses();
       if (apiCourses && apiCourses?.length > 0) {
         this.#courses.set(apiCourses.sort(sortCoursesBySeqNo));
@@ -70,9 +69,7 @@ export class HomeComponent {
     } catch (error) {
       alert('Error loading courses');
       console.error(error);
-    } finally {
-      this.loadingService.loadingOff();
-    }
+    } 
   }
 
   onCourseUpdated(updatedCourse: Course) {
@@ -85,7 +82,6 @@ export class HomeComponent {
 
   async onCourseDeleted(courseId: string) {
     try {
-      this.loadingService.loadingOn();
       await this.coursesService.deleteCourse(courseId);
       const courses = this.#courses();
       const newCourses = courses.filter((course) => course.id !== courseId);
@@ -93,9 +89,7 @@ export class HomeComponent {
     } catch (err) {
       console.error(err);
       alert('Error deleting course.');
-    } finally {
-      this.loadingService.loadingOff();
-    }
+    } 
   }
 
   async addCourse() {
