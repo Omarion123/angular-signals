@@ -23,6 +23,7 @@ import {
 } from '@angular/core/rxjs-interop';
 import { CoursesServiceWithFetch } from '../services/courses-fetch.service';
 import { openEditCourseDialog } from '../edit-course-dialog/edit-course-dialog.component';
+import { LoadingService } from '../loading/loading.service';
 
 @Component({
   selector: 'home',
@@ -36,7 +37,8 @@ export class HomeComponent {
   constructor(
     private readonly coursesServiceWithFetch: CoursesServiceWithFetch,
     private readonly coursesService: CoursesService,
-    private readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    private readonly loadingService: LoadingService
   ) {
     effect(() => {
       console.log('beginners courses: ', this.beginnersCourses());
@@ -60,6 +62,7 @@ export class HomeComponent {
 
   async loadCourses() {
     try {
+      this.loadingService.loadingOn();
       const apiCourses = await this.coursesService.loadAllCourses();
       if (apiCourses && apiCourses?.length > 0) {
         this.#courses.set(apiCourses.sort(sortCoursesBySeqNo));
@@ -67,6 +70,8 @@ export class HomeComponent {
     } catch (error) {
       alert('Error loading courses');
       console.error(error);
+    } finally {
+      this.loadingService.loadingOff();
     }
   }
 
@@ -80,6 +85,7 @@ export class HomeComponent {
 
   async onCourseDeleted(courseId: string) {
     try {
+      this.loadingService.loadingOn();
       await this.coursesService.deleteCourse(courseId);
       const courses = this.#courses();
       const newCourses = courses.filter((course) => course.id !== courseId);
@@ -87,6 +93,8 @@ export class HomeComponent {
     } catch (err) {
       console.error(err);
       alert('Error deleting course.');
+    } finally {
+      this.loadingService.loadingOff();
     }
   }
 
