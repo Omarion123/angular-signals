@@ -1,18 +1,16 @@
-<loading/>
+<loading />
 
 <div class="edit-course-form">
-
   <h3></h3>
 
   <div class="form-control">
     <label>Course title:</label>
-    <input placeholder="Enter course title">
+    <input placeholder="Enter course title" />
   </div>
 
   <div class="form-control">
     <label>Course description:</label>
-    <textarea placeholder="Enter course description">
-    </textarea>
+    <textarea placeholder="Enter course description"> </textarea>
   </div>
 
   <div class="form-control">
@@ -26,19 +24,12 @@
 
   <div class="form-control">
     <label>Course image:</label>
-    <input placeholder="Enter course title">
+    <input placeholder="Enter course title" />
   </div>
 
   <div class="form-actions">
+    <button class="btn">Save</button>
 
-    <button class="btn">
-      Save
-    </button>
-
-    <button class="btn">
-      Cancel
-    </button>
-
+    <button class="btn" (click)="onClose()">Cancel</button>
   </div>
-
 </div>

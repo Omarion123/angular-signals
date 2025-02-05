@@ -2,6 +2,7 @@ import { Component, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Course } from '../models/course.model';
 import { MatDialog } from '@angular/material/dialog';
+import { openEditCourseDialog } from '../edit-course-dialog/edit-course-dialog.component';
 
 @Component({
   selector: 'courses-card-list',
@@ -11,14 +12,20 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class CoursesCardListComponent {
   courses = input.required<Course[]>();
-  //   this input will help us to get input of signal and it's required
-  //   we can use aliases or transform input into something else
-  //   we don't need require at this time because signal always have initial value
-  //   or undefined that angular give it.
-  /*
-  courses = input.required<Course[]>({
-    alias: 'data',
-    transform: pureFunction
-  });
-  */
+
+  constructor (private readonly dialog: MatDialog) {
+
+  }
+
+  async editCourse(_t1: Course) {
+    const newCourse = await openEditCourseDialog(
+        this.dialog,
+        {
+            mode: "update",
+            title: "Update Existing Course"
+        }
+    )
+
+    console.log(`course edited: `, newCourse)
+  }
 }
