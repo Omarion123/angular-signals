@@ -22,6 +22,7 @@ import {
   outputFromObservable,
 } from '@angular/core/rxjs-interop';
 import { CoursesServiceWithFetch } from '../services/courses-fetch.service';
+import { openEditCourseDialog } from '../edit-course-dialog/edit-course-dialog.component';
 
 @Component({
   selector: 'home',
@@ -34,7 +35,8 @@ export class HomeComponent {
 
   constructor(
     private readonly coursesServiceWithFetch: CoursesServiceWithFetch,
-    private readonly coursesService: CoursesService
+    private readonly coursesService: CoursesService,
+    private readonly dialog: MatDialog
   ) {
     effect(() => {
       console.log('beginners courses: ', this.beginnersCourses());
@@ -70,10 +72,10 @@ export class HomeComponent {
 
   onCourseUpdated(updatedCourse: Course) {
     const courses = this.#courses();
-    const newCourse = courses.map((course) =>
+    const newCourses = courses.map((course) =>
       course.id === updatedCourse.id ? updatedCourse : course
     );
-    this.#courses.set(newCourse);
+    this.#courses.set(newCourses);
   }
 
   async onCourseDeleted(courseId: string) {
@@ -86,5 +88,15 @@ export class HomeComponent {
       console.error(err);
       alert('Error deleting course.');
     }
+  }
+
+  async addCourse() {
+    const newCourse = await openEditCourseDialog(this.dialog, {
+      mode: 'create',
+      title: 'Create New Course',
+    });
+
+    const newCourses = [...this.#courses(), newCourse];
+    this.#courses.set(newCourses);
   }
 }
