@@ -1,6 +1,15 @@
-
-
-
-
-
-
+@if(message()){
+<div class="message-container">
+  <div class="message" [ngClass]="message()?.severity">
+    <!-- what will happen after ngClass directive is -->
+    <!-- if message()?.severity === 'info' then <div class="message info", under the hood -->
+    {{ message()?.text }}
+  </div>
+  <img
+    src="/assets/icons/close.svg"
+    alt="close-icon"
+    class="close"
+    (click)="onClose()"
+  />
+</div>
+}
