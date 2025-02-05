@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { Course } from '../models/course.model';
 import { GetCoursesResponse } from '../models/get-courses.response';
+import { SkipLoading } from '../loading/skip-loading.component';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,10 @@ export class CoursesService {
 
   loadAllCourses = async (): Promise<Course[] | undefined> => {
     const courses$ = this.http.get<GetCoursesResponse>(
-      `${this.env.apiRoot}/courses`
+      `${this.env.apiRoot}/courses`,
+      {
+        context: new HttpContext().set(SkipLoading, true),
+      }
     );
     const response = await firstValueFrom(courses$); // this will return promise of the first emited value
     return response.courses;
@@ -41,7 +45,9 @@ export class CoursesService {
   };
 
   deleteCourse = async (courseId: string): Promise<void> => {
-    const delete$ = this.http.delete<void>(`${this.env.apiRoot}/courses/${courseId}`);
+    const delete$ = this.http.delete<void>(
+      `${this.env.apiRoot}/courses/${courseId}`
+    );
     return firstValueFrom(delete$);
   };
 }
