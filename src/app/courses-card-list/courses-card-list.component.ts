@@ -13,19 +13,15 @@ import { openEditCourseDialog } from '../edit-course-dialog/edit-course-dialog.c
 export class CoursesCardListComponent {
   courses = input.required<Course[]>();
 
-  constructor (private readonly dialog: MatDialog) {
+  constructor(private readonly dialog: MatDialog) {}
 
-  }
+  async editCourse(course: Course) {
+    const newCourse = await openEditCourseDialog(this.dialog, {
+      mode: 'update',
+      title: 'Update Existing Course',
+      course: course,
+    });
 
-  async editCourse(_t1: Course) {
-    const newCourse = await openEditCourseDialog(
-        this.dialog,
-        {
-            mode: "update",
-            title: "Update Existing Course"
-        }
-    )
-
-    console.log(`course edited: `, newCourse)
+    console.log(`course edited: `, newCourse);
   }
 }

@@ -1,4 +1,11 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import {
+  afterRender,
+  Component,
+  effect,
+  Inject,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -9,7 +16,7 @@ import { Course } from '../models/course.model';
 import { EditCourseDialogData } from './edit-course-dialog.data.model';
 import { CoursesService } from '../services/courses.service';
 import { LoadingIndicatorComponent } from '../loading/loading.component';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CourseCategoryComboboxComponent } from '../course-category-combobox/course-category-combobox.component';
 import { CourseCategory } from '../models/course-category.model';
 import { firstValueFrom } from 'rxjs';
@@ -26,9 +33,34 @@ import { firstValueFrom } from 'rxjs';
   styleUrl: './edit-course-dialog.component.scss',
 })
 export class EditCourseDialogComponent {
+  data: EditCourseDialogData = inject(MAT_DIALOG_DATA);
+  form: FormGroup;
   constructor(
-    private readonly dialogRef: MatDialogRef<EditCourseDialogComponent, any>
-  ) {}
+    private readonly dialogRef: MatDialogRef<EditCourseDialogComponent, any>,
+    // @Inject(MAT_DIALOG_DATA) public data: EditCourseDialogData,
+    private readonly fb: FormBuilder
+  ) {
+    this.form = this.fb.group({
+      title: [''],
+      longDescription: [''],
+      category: [''],
+      iconUrl: [''],
+    });
+
+    this.form.patchValue({
+      title: this.data?.course?.title,
+      longDescription: this.data?.course?.longDescription,
+      category: this.data?.course?.category,
+      iconUrl: this.data?.course?.iconUrl,
+    });
+  }
+
+  ngOnInit() {
+    this.form.valueChanges.subscribe((values) => {
+      console.log({ 'form values: ': values, 'data: ': this.data });
+    });
+  }
+
   onClose() {
     // this will help us to close the dialog for edit or create
     // this.dialogRef.close({ title: 'hello world' }); // this is the value that will be emited when closing the dialog
