@@ -38,7 +38,8 @@ export class EditCourseDialogComponent {
   constructor(
     private readonly dialogRef: MatDialogRef<EditCourseDialogComponent, any>,
     // @Inject(MAT_DIALOG_DATA) public data: EditCourseDialogData,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly courseService: CoursesService
   ) {
     this.form = this.fb.group({
       title: [''],
@@ -59,6 +60,28 @@ export class EditCourseDialogComponent {
     this.form.valueChanges.subscribe((values) => {
       console.log({ 'form values: ': values, 'data: ': this.data });
     });
+  }
+
+  async onSave() {
+    const courseProps = this.form.value as Partial<Course>;
+
+    if (this.data.mode === 'update') {
+      await this.saveCourse(this.data?.course!.id, courseProps);
+    } else {
+    }
+  }
+
+  async saveCourse(courseId: string, changes: Partial<Course>) {
+    try {
+      const updatedCourse = await this.courseService.saveCourse(
+        courseId,
+        changes
+      );
+      this.dialogRef.close(updatedCourse);
+    } catch (err) {
+      console.error(err);
+      alert('failed to update course');
+    }
   }
 
   onClose() {
