@@ -75,4 +75,16 @@ export class HomeComponent {
     );
     this.#courses.set(newCourse);
   }
+
+  async onCourseDeleted(courseId: string) {
+    try {
+      await this.coursesService.deleteCourse(courseId);
+      const courses = this.#courses();
+      const newCourses = courses.filter((course) => course.id !== courseId);
+      this.#courses.set(newCourses);
+    } catch (err) {
+      console.error(err);
+      alert('Error deleting course.');
+    }
+  }
 }

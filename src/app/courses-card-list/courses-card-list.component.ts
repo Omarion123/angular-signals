@@ -13,6 +13,7 @@ import { openEditCourseDialog } from '../edit-course-dialog/edit-course-dialog.c
 export class CoursesCardListComponent {
   courses = input.required<Course[]>();
   courseUpdated = output<Course>();
+  courseDeleted = output<string>();
 
   constructor(private readonly dialog: MatDialog) {}
 
@@ -25,5 +26,9 @@ export class CoursesCardListComponent {
 
     console.log(`course edited: `, newCourse);
     this.courseUpdated.emit(newCourse);
+  }
+
+  onCourseDelete(course: Course) {
+    this.courseDeleted.emit(course.id);
   }
 }

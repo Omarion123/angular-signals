@@ -8,6 +8,7 @@
       <courses-card-list
         [courses]="beginnersCourses()"
         (courseUpdated)="onCourseUpdated($event)"
+        (courseDeleted)="onCourseDeleted($event)"
       />
     </mat-tab>
 
@@ -15,6 +16,7 @@
       <courses-card-list
         [courses]="advancedCourses()"
         (courseUpdated)="onCourseUpdated($event)"
+        (courseDeleted)="onCourseDeleted($event)"
       />
     </mat-tab>
   </mat-tab-group>
