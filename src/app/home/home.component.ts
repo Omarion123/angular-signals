@@ -60,7 +60,7 @@ export class HomeComponent {
     try {
       const apiCourses = await this.coursesService.loadAllCourses();
       if (apiCourses && apiCourses?.length > 0) {
-        this.#courses.set(apiCourses);
+        this.#courses.set(apiCourses.sort(sortCoursesBySeqNo));
       }
     } catch (error) {
       alert('Error loading courses');
