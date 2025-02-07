@@ -13,13 +13,15 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 export class LoginComponent {
   constructor(
     private readonly fb: FormBuilder,
-    private readonly messagesService: MessagesService
+    private readonly messagesService: MessagesService,
+    private readonly authService: AuthService,
+    private readonly router: Router
   ) {}
   form = this.fb.group({
     email: [''],
     password: [''],
   });
-  onLogin() {
+  async onLogin() {
     try {
       const { email, password } = this.form.value;
       if (!email || !password) {
@@ -27,6 +29,9 @@ export class LoginComponent {
           'Please provide email and password...',
           'warning'
         );
+      } else {
+        await this.authService.login(email, password);
+        await this.router.navigate(['/home']); // router is promise based
       }
     } catch (err) {
       console.log(err);
