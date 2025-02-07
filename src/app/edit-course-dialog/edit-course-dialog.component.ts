@@ -36,6 +36,7 @@ import { MessagesService } from '../messages/messages.service';
 export class EditCourseDialogComponent {
   data: EditCourseDialogData = inject(MAT_DIALOG_DATA);
   form: FormGroup;
+  category = signal<CourseCategory>('BEGINNER');
   constructor(
     private readonly dialogRef: MatDialogRef<EditCourseDialogComponent, any>,
     // @Inject(MAT_DIALOG_DATA) public data: EditCourseDialogData,
@@ -46,16 +47,14 @@ export class EditCourseDialogComponent {
     this.form = this.fb.group({
       title: [''],
       longDescription: [''],
-      category: [''],
       iconUrl: [''],
     });
-
     this.form.patchValue({
       title: this.data?.course?.title,
       longDescription: this.data?.course?.longDescription,
-      category: this.data?.course?.category,
       iconUrl: this.data?.course?.iconUrl,
     });
+    this.category.set(this.data?.course?.category!);
   }
 
   ngOnInit() {
@@ -66,7 +65,7 @@ export class EditCourseDialogComponent {
 
   async onSave() {
     const courseProps = this.form.value as Partial<Course>;
-
+    courseProps.category = this.category();
     if (this.data.mode === 'update') {
       await this.saveCourse(this.data?.course!.id, courseProps);
     } else if (this.data.mode === 'create') {
