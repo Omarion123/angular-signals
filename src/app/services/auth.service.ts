@@ -11,10 +11,13 @@ const USER_STORAGE_KEY = 'user';
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly router: Router
+  ) {}
   #userSignal = signal<User | null>(null);
   user = this.#userSignal.asReadonly();
-  isLoggedIn = computed(() => !!this.user);
+  isLoggedIn = computed(() => !!this.user());
 
   async login(email: string, password: string): Promise<User> {
     const login$ = this.http.post<User>(`${environment.apiRoot}/login`, {
@@ -24,5 +27,10 @@ export class AuthService {
     const user = await firstValueFrom(login$);
     this.#userSignal.set(user);
     return user;
+  }
+
+  async logout() {
+    this.#userSignal.set(null);
+    await this.router.navigate(['/login']);
   }
 }
