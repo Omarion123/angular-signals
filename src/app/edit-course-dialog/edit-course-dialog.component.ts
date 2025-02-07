@@ -54,7 +54,7 @@ export class EditCourseDialogComponent {
       longDescription: this.data?.course?.longDescription,
       iconUrl: this.data?.course?.iconUrl,
     });
-    this.category.set(this.data?.course?.category!);
+    this.category.set(this.data?.course?.category! ?? 'BEGINNER');
   }
 
   ngOnInit() {
