@@ -20,6 +20,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CourseCategoryComboboxComponent } from '../course-category-combobox/course-category-combobox.component';
 import { CourseCategory } from '../models/course-category.model';
 import { firstValueFrom } from 'rxjs';
+import { MessagesService } from '../messages/messages.service';
 
 @Component({
   selector: 'edit-course-dialog',
@@ -39,7 +40,8 @@ export class EditCourseDialogComponent {
     private readonly dialogRef: MatDialogRef<EditCourseDialogComponent, any>,
     // @Inject(MAT_DIALOG_DATA) public data: EditCourseDialogData,
     private readonly fb: FormBuilder,
-    private readonly courseService: CoursesService
+    private readonly courseService: CoursesService,
+    private readonly messagesService: MessagesService
   ) {
     this.form = this.fb.group({
       title: [''],
@@ -78,7 +80,7 @@ export class EditCourseDialogComponent {
       this.dialogRef.close(newCourse);
     } catch (err) {
       console.error(err);
-      alert('Error creating course');
+      this.messagesService.showMessage('Error creating courses', 'error');
     }
   }
 
@@ -91,7 +93,7 @@ export class EditCourseDialogComponent {
       this.dialogRef.close(updatedCourse);
     } catch (err) {
       console.error(err);
-      alert('failed to update course');
+      this.messagesService.showMessage('Error updating courses', 'error');
     }
   }
 

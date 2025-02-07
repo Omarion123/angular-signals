@@ -4,12 +4,12 @@
     <!-- what will happen after ngClass directive is -->
     <!-- if message()?.severity === 'info' then <div class="message info", under the hood -->
     {{ message()?.text }}
+    <img
+      src="/assets/icons/close.svg"
+      alt="close-icon"
+      class="close"
+      (click)="onClose()"
+    />
   </div>
-  <img
-    src="/assets/icons/close.svg"
-    alt="close-icon"
-    class="close"
-    (click)="onClose()"
-  />
 </div>
 }

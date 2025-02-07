@@ -38,7 +38,8 @@ export class HomeComponent {
     private readonly coursesServiceWithFetch: CoursesServiceWithFetch,
     private readonly coursesService: CoursesService,
     private readonly dialog: MatDialog,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly messagesService: MessagesService
   ) {
     effect(() => {
       console.log('beginners courses: ', this.beginnersCourses());
@@ -67,9 +68,9 @@ export class HomeComponent {
         this.#courses.set(apiCourses.sort(sortCoursesBySeqNo));
       }
     } catch (error) {
-      alert('Error loading courses');
+      this.messagesService.showMessage('Error loading courses', 'error');
       console.error(error);
-    } 
+    }
   }
 
   onCourseUpdated(updatedCourse: Course) {
@@ -87,9 +88,9 @@ export class HomeComponent {
       const newCourses = courses.filter((course) => course.id !== courseId);
       this.#courses.set(newCourses);
     } catch (err) {
-      console.error(err);
+      this.messagesService.showMessage('Error deleting courses', 'error');
       alert('Error deleting course.');
-    } 
+    }
   }
 
   async addCourse() {
