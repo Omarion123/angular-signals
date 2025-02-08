@@ -57,9 +57,9 @@ export class HomeComponent {
     private readonly injector: Injector
   ) {
     effect(() => {
-      console.log('beginnersList: ', this.beginnersList());
-      console.log('beginners courses: ', this.beginnersCourses());
-      console.log('advanced courses: ', this.advancedCourses());
+      // console.log('beginnersList: ', this.beginnersList());
+      // console.log('beginners courses: ', this.beginnersCourses());
+      // console.log('advanced courses: ', this.advancedCourses());
     });
 
     afterNextRender(() => {
@@ -138,6 +138,15 @@ export class HomeComponent {
       {
         injector: this.injector,
       }
+    );
+  }
+
+  onToObservable() {
+    // toObservalbe can on be used in injection context like constructor,
+    // but using it in function like this, we will need to provide enjection context
+    const courses$ = toObservable(this.#courses, { injector: this.injector });
+    courses$.subscribe((courses) =>
+      console.log('courses observable: ', courses)
     );
   }
 }
