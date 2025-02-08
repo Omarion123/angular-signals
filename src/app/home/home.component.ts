@@ -16,7 +16,7 @@ import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { CoursesCardListComponent } from '../courses-card-list/courses-card-list.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MessagesService } from '../messages/messages.service';
-import { catchError, from, throwError } from 'rxjs';
+import { catchError, from, interval, startWith, throwError } from 'rxjs';
 import {
   toObservable,
   toSignal,
@@ -53,7 +53,8 @@ export class HomeComponent {
     private readonly coursesService: CoursesService,
     private readonly dialog: MatDialog,
     private readonly loadingService: LoadingService,
-    private readonly messagesService: MessagesService
+    private readonly messagesService: MessagesService,
+    private readonly injector: Injector
   ) {
     effect(() => {
       console.log('beginnersList: ', this.beginnersList());
@@ -120,5 +121,23 @@ export class HomeComponent {
 
     const newCourses = [...this.#courses(), newCourse];
     this.#courses.set(newCourses);
+  }
+
+  onToSignal() {
+    const timer$ = interval(1000).pipe(startWith(0));
+    const numbers = toSignal(timer$, {
+      injector: this.injector,
+      // initialValue: 0, // when you want to set initial value explicitly
+      requireSync: true, // when you want to force observable to provide initial value
+    });
+
+    effect(
+      () => {
+        console.log('timer: ', numbers());
+      },
+      {
+        injector: this.injector,
+      }
+    );
   }
 }
