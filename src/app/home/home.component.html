@@ -6,6 +6,8 @@
   <mat-tab-group>
     <mat-tab label="Beginners">
       <courses-card-list
+        #beginnersList
+        MatTooltip="these are beginners course"
         [courses]="beginnersCourses()"
         (courseUpdated)="onCourseUpdated($event)"
         (courseDeleted)="onCourseDeleted($event)"

@@ -4,9 +4,11 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
   Injector,
   signal,
+  viewChild,
 } from '@angular/core';
 import { CoursesService } from '../services/courses.service';
 import { Course, sortCoursesBySeqNo } from '../models/course.model';
@@ -33,6 +35,18 @@ import { LoadingService } from '../loading/loading.service';
 })
 export class HomeComponent {
   #courses = signal<Course[]>([]);
+  // we can also query component itself
+  beginnersList = viewChild<CoursesCardListComponent>('beginnersList');
+
+  // if we want Dom element of the component
+  // beginnersList = viewChild('beginnersList', {
+  //   read: ElementRef,
+  // });
+
+  // if we want to query the directive
+  // beginnersList = viewChild('beginnersList', {
+  //   read: MatTooltip,
+  // });
 
   constructor(
     private readonly coursesServiceWithFetch: CoursesServiceWithFetch,
@@ -42,6 +56,7 @@ export class HomeComponent {
     private readonly messagesService: MessagesService
   ) {
     effect(() => {
+      console.log('beginnersList: ', this.beginnersList());
       console.log('beginners courses: ', this.beginnersCourses());
       console.log('advanced courses: ', this.advancedCourses());
     });
