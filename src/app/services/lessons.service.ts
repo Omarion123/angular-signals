@@ -33,4 +33,17 @@ export class LessonsService {
     const response = await firstValueFrom(lessons$);
     return response.lessons;
   }
+
+  async saveLesson(
+    lessonId: string,
+    changes: Partial<Lesson>
+  ): Promise<Lesson> {
+    const saveLesson$ = this.http.put<Lesson>(
+      `${this.env.apiRoot}/lessons/${lessonId}`,
+      changes
+    );
+
+    // if we return it immediately, we won't need to use await
+    return firstValueFrom(saveLesson$);
+  }
 }
