@@ -17,10 +17,11 @@
     </textarea>
   </div>
 
-  <course-category-combobox 
-  [label]="'Course Category'"
-  [(value)]="category"
-  />
+  <course-category-combobox [label]="'Course Category'" [(value)]="category">
+    <!-- we can use component as well -->
+    <div class="title" #title>Course Category (via content projection)</div>
+    <div class="title" #title>Another title (via content projection)</div>
+  </course-category-combobox>
 
   <div class="form-control">
     <label>Course image:</label>
