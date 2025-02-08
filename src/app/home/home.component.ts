@@ -141,12 +141,30 @@ export class HomeComponent {
     );
   }
 
+  // onToObservable() {
+  //   // toObservalbe can on be used in injection context like constructor,
+  //   // but using it in function like this, we will need to provide enjection context
+  //   const courses$ = toObservable(this.#courses, { injector: this.injector });
+  //   courses$.subscribe((courses) =>
+  //     console.log('courses observable: ', courses)
+  //   );
+  // }
+
   onToObservable() {
-    // toObservalbe can on be used in injection context like constructor,
-    // but using it in function like this, we will need to provide enjection context
-    const courses$ = toObservable(this.#courses, { injector: this.injector });
-    courses$.subscribe((courses) =>
-      console.log('courses observable: ', courses)
-    );
+    const numbers = signal(0);
+    numbers.set(1);
+    numbers.set(2);
+    numbers.set(3);
+
+    const numbers$ = toObservable(numbers, {
+      injector: this.injector,
+    });
+
+    numbers.set(4);
+    numbers$.subscribe((val) => console.log('numbers$: ', val));
+    // will log only this: numbers$ 5; because angular waits for value of the signal
+    // to stabilize at the the end of change detection cycle before...
+    // triggering any dependent effect or compute
+    numbers.set(5);
   }
 }
