@@ -123,23 +123,23 @@ export class HomeComponent {
     this.#courses.set(newCourses);
   }
 
-  onToSignal() {
-    const timer$ = interval(1000).pipe(startWith(0));
-    const numbers = toSignal(timer$, {
-      injector: this.injector,
-      // initialValue: 0, // when you want to set initial value explicitly
-      requireSync: true, // when you want to force observable to provide initial value
-    });
+  // onToSignal() {
+  //   const timer$ = interval(1000).pipe(startWith(0));
+  //   const numbers = toSignal(timer$, {
+  //     injector: this.injector,
+  //     // initialValue: 0, // when you want to set initial value explicitly
+  //     requireSync: true, // when you want to force observable to provide initial value
+  //   });
 
-    effect(
-      () => {
-        console.log('timer: ', numbers());
-      },
-      {
-        injector: this.injector,
-      }
-    );
-  }
+  //   effect(
+  //     () => {
+  //       console.log('timer: ', numbers());
+  //     },
+  //     {
+  //       injector: this.injector,
+  //     }
+  //   );
+  // }
 
   // onToObservable() {
   //   // toObservalbe can on be used in injection context like constructor,
@@ -166,5 +166,20 @@ export class HomeComponent {
     // to stabilize at the the end of change detection cycle before...
     // triggering any dependent effect or compute
     numbers.set(5);
+  }
+  courses$ = from(this.coursesService.loadAllCourses());
+  onToSignal() {
+    // the reason we need to use that injector, is because:
+    // angular internaly subscribe to that observable in order to make the signal
+    // which means that angular we will be able to clean that subscription when component get's detroyed
+    // in order to avoid memory leaks
+    const courses = toSignal(this.courses$, { injector: this.injector });
+    effect(
+      () => {
+        console.log('courses signal: ', courses());
+      },
+      // same thing for this effect, it needs to be cleaned up when component destroyed
+      { injector: this.injector }
+    );
   }
 }
