@@ -167,19 +167,57 @@ export class HomeComponent {
     // triggering any dependent effect or compute
     numbers.set(5);
   }
-  courses$ = from(this.coursesService.loadAllCourses());
+
+  // courses$ = from(this.coursesService.loadAllCourses());
+  // onToSignal() {
+  //   // the reason we need to use that injector, is because:
+  //   // angular internaly subscribe to that observable in order to make the signal
+  //   // which means that angular we will be able to clean that subscription when component get's detroyed
+  //   // in order to avoid memory leaks
+  //   const courses = toSignal(this.courses$, { injector: this.injector });
+  //   effect(
+  //     () => {
+  //       console.log('courses signal: ', courses());
+  //     },
+  //     // same thing for this effect, it needs to be cleaned up when component destroyed
+  //     { injector: this.injector }
+  //   );
+  // }
+
   onToSignal() {
-    // the reason we need to use that injector, is because:
-    // angular internaly subscribe to that observable in order to make the signal
-    // which means that angular we will be able to clean that subscription when component get's detroyed
-    // in order to avoid memory leaks
-    const courses = toSignal(this.courses$, { injector: this.injector });
-    effect(
-      () => {
-        console.log('courses signal: ', courses());
-      },
-      // same thing for this effect, it needs to be cleaned up when component destroyed
-      { injector: this.injector }
-    );
+    // error handling in observable when converting to signal
+    // we can either choose to handle it in the observable stream or after converting
+    try {
+      const courses$ = from(this.coursesService.loadAllCourses()).pipe(
+        catchError((err) => {
+          console.log('Error occured in catchError of observable stream', err);
+          throw err;
+        })
+      );
+      const courses = toSignal(courses$, {
+        injector: this.injector,
+        // this time arround courses signal is emitting the erros each time observable emits something
+        // but to angular, that handling error should happen in observable stream and not in signal we use:
+        rejectErrors: true,
+        // this time arround we will be emmitting last valid emitions of courses
+      });
+
+      effect(
+        () => {
+          console.log('courses: ', courses());
+        },
+        {
+          injector: this.injector,
+        }
+      );
+      // this time we will be emitting valid values, of courses signal because we use jectErrors: true;
+      // what we will emit is undefined because we don't have initial value of the observalbe
+      // setInterval(() => {
+      //   console.log('emitting course signal: ', courses());
+      // }, 1000);
+    } catch (err) {
+      // we will not get error here because it will be being handled in the observable stream
+      console.log('Error in catch block: ', err);
+    }
   }
 }
